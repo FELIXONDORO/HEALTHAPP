@@ -11,10 +11,26 @@
   --peach: #fff0e7;
   --blue-soft: #e9f2ff;
   --shadow: 0 12px 34px rgba(38, 53, 74, 0.06);
+  --grid-line: #f1f3f5;
+}
+
+:root[data-theme="dark"] {
+  --ink: #e4eaf0;
+  --muted: #a7b2bf;
+  --line: #2c3a4a;
+  --surface: #172230;
+  --canvas: #101923;
+  --navy: #f1f5f7;
+  --teal-soft: #173d3a;
+  --lavender: #302b4c;
+  --peach: #49342d;
+  --blue-soft: #263b56;
+  --shadow: 0 12px 34px rgba(0, 0, 0, 0.18);
+  --grid-line: #263442;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; color: var(--ink); background: var(--canvas); font-family: "Trebuchet MS", "Segoe UI", sans-serif; }
+body { margin: 0; color: var(--ink); background: var(--canvas); font-family: "Trebuchet MS", "Segoe UI", sans-serif; transition: color .2s ease, background-color .2s ease; }
 a { color: inherit; text-decoration: none; }
 button { border: 0; font: inherit; cursor: pointer; }
 .app-shell { display: flex; min-height: 100vh; }
@@ -25,19 +41,21 @@ button { border: 0; font: inherit; cursor: pointer; }
 .nav-label { color: #a2a9b4; font-size: 10px; letter-spacing: 1.1px; font-weight: 800; padding: 0 14px 10px; text-transform: uppercase; }
 .nav { display: grid; gap: 5px; }
 .nav-link { display: flex; align-items: center; gap: 13px; padding: 12px 14px; color: #7c8794; font-size: 13px; font-weight: 700; border-radius: 10px; transition: .2s ease; }
-.nav-link:hover { background: #f4f8f8; color: var(--teal); }
+.nav-link:hover { background: var(--teal-soft); color: var(--teal); }
 .nav-link.active { color: var(--teal); background: var(--teal-soft); }
 .nav-link svg { width: 17px; height: 17px; stroke-width: 1.9; }
-.sidebar-foot { margin-top: auto; background: #f5f8f8; border-radius: 14px; padding: 15px; font-size: 11px; color: var(--muted); line-height: 1.5; }
+.sidebar-foot { margin-top: auto; background: var(--teal-soft); border-radius: 14px; padding: 15px; font-size: 11px; color: var(--muted); line-height: 1.5; }
 .sidebar-foot strong { display: block; color: var(--navy); font-size: 12px; margin-bottom: 4px; }
 .main { flex: 1; min-width: 0; }
 .topbar { height: 78px; background: var(--surface); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 42px; }
 .breadcrumb { color: #a0a8b4; font-size: 12px; font-weight: 700; }
 .breadcrumb strong { color: var(--navy); }
 .top-actions { display: flex; align-items: center; gap: 24px; }
-.icon-button { background: transparent; color: #8994a0; padding: 5px; position: relative; }
+.icon-button { background: transparent; color: #8994a0; padding: 5px; position: relative; border-radius: 8px; }
+.icon-button:hover { color: var(--teal); background: var(--teal-soft); }
 .icon-button svg { width: 19px; height: 19px; }
-.dot { position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; background: #ef8d75; border: 2px solid white; border-radius: 50%; }
+.theme-icon { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.dot { position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; background: #ef8d75; border: 2px solid var(--surface); border-radius: 50%; }
 .user { display: flex; align-items: center; gap: 10px; border-left: 1px solid var(--line); padding-left: 22px; }
 .avatar { width: 35px; height: 35px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 11px; color: #fff; background: #8d9bb5; }
 .user-name { color: var(--navy); font-size: 12px; font-weight: 800; }
@@ -75,7 +93,7 @@ h1 { color: var(--navy); font-family: Georgia, serif; font-weight: 500; font-siz
 .chart-meta { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
 .chart-number { color: var(--navy); font-family: Georgia, serif; font-size: 27px; }
 .chart-note { color: var(--teal); font-size: 10px; font-weight: 800; }
-.chart { height: 146px; display: flex; align-items: end; gap: 12px; border-bottom: 1px solid var(--line); background: repeating-linear-gradient(to bottom, transparent 0, transparent 35px, #f1f3f5 36px); padding: 0 3px; }
+.chart { height: 146px; display: flex; align-items: end; gap: 12px; border-bottom: 1px solid var(--line); background: repeating-linear-gradient(to bottom, transparent 0, transparent 35px, var(--grid-line) 36px); padding: 0 3px; }
 .bar { flex: 1; min-width: 10px; max-width: 30px; background: #b5e6dc; border-radius: 5px 5px 0 0; position: relative; transition: .2s ease; }
 .bar:hover { background: var(--teal); }
 .bar.highlight { background: var(--teal); }

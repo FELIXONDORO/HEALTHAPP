@@ -5,6 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Carely{% endblock %} | Carely</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
+  <script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem('carely-theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.dataset.theme = savedTheme;
+      } catch (error) {
+        // Continue with the light theme when browser storage is unavailable.
+      }
+    }());
+  </script>
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -33,6 +44,7 @@
         <div class="top-actions">
           <button class="icon-button" aria-label="Search"><i data-lucide="search"></i></button>
           <button class="icon-button" aria-label="Notifications"><i data-lucide="bell"></i><span class="dot"></span></button>
+          <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme"><svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.7 6.7 0 0 0 21 12.8Z"></path></svg></button>
           <div class="user"><div class="avatar">DR</div><div class="user-copy"><div class="user-name">Dr. Rachel Kim</div><div class="user-role">Care provider</div></div><i data-lucide="chevron-down" style="width:14px;color:#9aa3ae"></i></div>
         </div>
       </header>
