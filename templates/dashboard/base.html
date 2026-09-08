@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Carely{% endblock %} | Carely</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="{% url 'dashboard:home' %}"><span class="brand-mark"><i data-lucide="heart-pulse"></i></span><span class="brand-name">carely</span></a>
+      <div class="nav-label">Workspace</div>
+      <nav class="nav">
+        <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:home' %}"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <a class="nav-link {% if active_page == 'appointments' %}active{% endif %}" href="{% url 'dashboard:appointments' %}"><i data-lucide="calendar-days"></i><span>Appointments</span></a>
+        <a class="nav-link {% if active_page == 'patients' %}active{% endif %}" href="{% url 'dashboard:patients' %}"><i data-lucide="users-round"></i><span>Patients</span></a>
+        <a class="nav-link" href="#"><i data-lucide="message-circle"></i><span>Messages</span></a>
+        <a class="nav-link" href="#"><i data-lucide="file-heart"></i><span>Health records</span></a>
+      </nav>
+      <div class="nav-label" style="margin-top: 30px;">Account</div>
+      <nav class="nav">
+        <a class="nav-link" href="#"><i data-lucide="settings-2"></i><span>Settings</span></a>
+        <a class="nav-link" href="#"><i data-lucide="circle-help"></i><span>Help center</span></a>
+      </nav>
+      <div class="sidebar-foot"><strong>Need assistance?</strong>Our care team is here to help whenever you need us.</div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumb">Workspace / <strong>{% block breadcrumb %}Dashboard{% endblock %}</strong></div>
+        <div class="top-actions">
+          <button class="icon-button" aria-label="Search"><i data-lucide="search"></i></button>
+          <button class="icon-button" aria-label="Notifications"><i data-lucide="bell"></i><span class="dot"></span></button>
+          <div class="user"><div class="avatar">DR</div><div class="user-copy"><div class="user-name">Dr. Rachel Kim</div><div class="user-role">Care provider</div></div><i data-lucide="chevron-down" style="width:14px;color:#9aa3ae"></i></div>
+        </div>
+      </header>
+      <section class="content">{% block content %}{% endblock %}</section>
+    </main>
+  </div>
+  <script>lucide.createIcons();</script>
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

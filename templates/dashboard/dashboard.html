@@ -1,0 +1,15 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="eyebrow">Monday, June 3, 2024</div>
+<h1>Good morning, Dr. Kim</h1>
+<p class="subtitle">Here is what is happening with your care practice today.</p>
+<div class="stats-grid">
+  {% for stat in stats %}<article class="stat-card"><div class="stat-top"><span>{{ stat.label }}</span><span class="stat-icon"><i data-lucide="{{ stat.icon }}"></i></span></div><div class="stat-value">{{ stat.value }}</div><div class="stat-foot"><span class="trend-{{ stat.trend }}">{{ stat.change }}</span> from last month</div></article>{% endfor %}
+</div>
+<div class="dashboard-grid">
+  <section class="panel"><div class="panel-head"><span class="panel-title">Today's appointments</span><a class="panel-link" href="{% url 'dashboard:appointments' %}">View calendar <i data-lucide="arrow-up-right" style="width:13px;vertical-align:middle"></i></a></div>{% for appointment in appointments %}<div class="appointment"><span class="time">{{ appointment.time }}</span><span class="person-avatar {{ appointment.tone }}">{{ appointment.initials }}</span><div><div class="person-name">{{ appointment.patient }}</div><div class="person-type">{{ appointment.type }}</div></div><span class="status {% if appointment.status == 'Pending' %}pending{% endif %}">{{ appointment.status }}</span></div>{% endfor %}</section>
+  <section class="panel"><div class="panel-head"><span class="panel-title">Patient overview</span><a class="panel-link" href="{% url 'dashboard:patients' %}">Details <i data-lucide="arrow-up-right" style="width:13px;vertical-align:middle"></i></a></div><div class="chart-wrap"><div class="chart-meta"><span class="chart-number">1,284 <small style="font: 11px 'Trebuchet MS';color:#9aa3ae">patients</small></span><span class="chart-note">+12.5% this year</span></div><div class="chart">{% for height in chart_heights %}<span class="bar {% if forloop.counter == 12 %}highlight{% endif %}" style="height:{{ height }}%"></span>{% endfor %}</div><div class="chart-labels"><span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span></div></div></section>
+</div>
+<div class="quick"><a class="quick-link" href="#"><i data-lucide="user-round-plus"></i>Add new patient</a><a class="quick-link" href="#"><i data-lucide="calendar-plus-2"></i>Schedule appointment</a><a class="quick-link" href="#"><i data-lucide="send"></i>Send a message</a></div>
+{% endblock %}

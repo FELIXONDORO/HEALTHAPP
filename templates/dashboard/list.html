@@ -1,0 +1,7 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}{{ page_title }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">Care practice</div><h1>{{ page_title }}</h1><p class="subtitle">{{ page_subtitle }}</p></div><button class="primary-button"><i data-lucide="plus" style="width:14px;height:14px;vertical-align:middle"></i> Add new</button></div>
+<section class="panel list-panel"><table><thead><tr>{% if item_type == 'appointment' %}<th>Time</th><th>Patient</th><th>Visit type</th><th>Status</th>{% else %}<th>Patient</th><th>Email</th><th>Last visit</th><th>Status</th>{% endif %}</tr></thead><tbody>{% for item in items %}<tr>{% if item_type == 'appointment' %}<td>{{ item.time }}</td><td><strong>{{ item.patient }}</strong></td><td>{{ item.type }}</td><td><span class="status {% if item.status == 'Pending' %}pending{% endif %}">{{ item.status }}</span></td>{% else %}<td><strong>{{ item.name }}</strong></td><td>{{ item.email }}</td><td>{{ item.last_visit }}</td><td><span class="status">{{ item.status }}</span></td>{% endif %}</tr>{% endfor %}</tbody></table></section>
+{% endblock %}
