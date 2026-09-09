@@ -1,6 +1,23 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def load_env_file(path):
+    """Load local development settings without committing credentials."""
+    if not path.exists():
+        return
+
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"\''))
+
+
+load_env_file(BASE_DIR / ".env")
 
 SECRET_KEY = "django-insecure-healthapp-local-development-key"
 DEBUG = True
@@ -47,8 +64,13 @@ WSGI_APPLICATION = "healthapp.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "HOST": os.environ["DB_HOST"],
+        "PORT": os.environ.get("DB_PORT", "3306"),
+        "NAME": os.environ["DB_NAME"],
+        "USER": os.environ["DB_USER"],
+        "PASSWORD": os.environ["DB_PASSWORD"],
+        "OPTIONS": {"charset": "utf8mb4"},
     }
 }
 

@@ -1,4 +1,9 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.db.models import Count
+from django.shortcuts import redirect, render
+
+from .forms import AppointmentForm, PatientForm
+from .models import Appointment, Patient
 
 
 APPOINTMENTS = [
@@ -33,8 +38,48 @@ def dashboard(request):
 
 
 def appointments(request):
-    return render(request, "dashboard/list.html", {"active_page": "appointments", "page_title": "Appointments", "page_subtitle": "Keep track of upcoming patient visits.", "items": APPOINTMENTS, "item_type": "appointment"})
+    if request.method == "POST":
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save()
+            messages.success(request, f"Appointment for {appointment.patient} was created.")
+            return redirect("dashboard:appointments")
+    else:
+        form = AppointmentForm()
+
+    return render(
+        request,
+        "dashboard/list.html",
+        {
+            "active_page": "appointments",
+            "page_title": "Appointments",
+            "page_subtitle": "Keep track of upcoming patient visits.",
+            "items": Appointment.objects.select_related("patient").order_by("starts_at"),
+            "item_type": "appointment",
+            "form": form,
+        },
+    )
 
 
 def patients(request):
-    return render(request, "dashboard/list.html", {"active_page": "patients", "page_title": "Patients", "page_subtitle": "Manage your patient relationships in one place.", "items": PATIENTS, "item_type": "patient"})
+    if request.method == "POST":
+        form = PatientForm(request.POST)
+        if form.is_valid():
+            patient = form.save()
+            messages.success(request, f"{patient.name} was added. You can now select them when scheduling an appointment.")
+            return redirect("dashboard:patients")
+    else:
+        form = PatientForm()
+
+    return render(
+        request,
+        "dashboard/list.html",
+        {
+            "active_page": "patients",
+            "page_title": "Patients",
+            "page_subtitle": "Manage your patient relationships in one place.",
+            "items": Patient.objects.annotate(appointment_count=Count("appointments")).order_by("name"),
+            "item_type": "patient",
+            "form": form,
+        },
+    )
