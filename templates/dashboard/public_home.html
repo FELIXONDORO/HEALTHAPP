@@ -1,0 +1,18 @@
+{% extends 'dashboard/public_base.html' %}
+{% load static %}
+{% block content %}
+<header class="public-header">
+  <a class="public-brand" href="{% url 'dashboard:home' %}"><img src="{% static 'img/apex-homecare-logo.png' %}" alt="Apex Homecare logo"><span>Apex <em>Homecare</em></span></a>
+  <nav><a href="#services">Services</a><a href="#why-us">Why Apex</a><a href="#contact">Contact</a></nav>
+  <div class="account-links">{% if request.user.is_authenticated %}<span>{{ request.user.email }}</span><a href="{% url 'dashboard:logout' %}">Sign out</a>{% else %}<a href="{% url 'dashboard:login' %}">Sign in</a><a class="admin-link" href="{% url 'dashboard:signup' %}">Create account</a>{% endif %}<a class="admin-link" href="{% url 'dashboard:admin_login' %}">Admin</a></div>
+</header>
+{% if messages %}<div class="public-messages">{% for message in messages %}<div class="message success">{{ message }}</div>{% endfor %}</div>{% endif %}
+<main>
+  <section class="hero"><div><p class="eyebrow">Apex Homecare &middot; Eldoret</p><h1>Professional healthcare at your doorstep.</h1><p class="hero-copy">Compassionate, reliable home healthcare for you and the people you love. We bring skilled care, support and peace of mind to your home.</p><div class="hero-actions"><a class="primary-button" href="{% url 'dashboard:signup' %}">Create an account</a><a class="text-link" href="tel:0706023435">Call 0706 023 435</a></div></div><div class="hero-art"><img src="{% static 'img/apex-homecare-logo.png' %}" alt="Apex Homecare"></div></section>
+  <section class="trust-strip"><span><i data-lucide="heart-handshake"></i> Compassionate professionals</span><span><i data-lucide="clock-3"></i> Responsive support</span><span><i data-lucide="house-heart"></i> Care in your home</span></section>
+  <section class="services-section" id="services"><div class="section-intro"><p class="eyebrow">Our services</p><h2>Care tailored to your home and family.</h2><p>Support for every stage of health, recovery and wellbeing.</p></div><div class="service-grid">{% for icon, title, description in services %}<article class="service-card"><span><i data-lucide="{{ icon }}"></i></span><h3>{{ title }}</h3><p>{{ description }}</p></article>{% endfor %}</div></section>
+  <section class="why-section" id="why-us"><div><p class="eyebrow">Why choose us</p><h2>Healthcare that feels personal.</h2></div><div class="why-list"><p><strong>Convenient care</strong>Care is delivered at home for comfort and ease.</p><p><strong>Responsive support</strong>Available when you need healthcare assistance.</p><p><strong>Qualified team</strong>Licensed, trained and compassionate staff.</p></div></section>
+  <section class="contact-section" id="contact"><div><p class="eyebrow">Get in touch</p><h2>Let us bring quality healthcare home.</h2><p>Serving Eldoret and surrounding areas.</p></div><div class="contact-actions"><a href="tel:0706023435"><i data-lucide="phone"></i> 0706 023 435</a><a href="mailto:apexeldoret@gmail.com"><i data-lucide="mail"></i> apexeldoret@gmail.com</a></div></section>
+</main>
+<footer class="public-footer">&copy; {% now "Y" %} Apex Homecare. Professional healthcare at your doorstep.</footer>
+{% endblock %}

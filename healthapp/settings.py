@@ -83,3 +83,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# The temporary administrator gate uses signed browser sessions. This keeps the
+# login available while the database-backed Google/email authentication flow is
+# being built.
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

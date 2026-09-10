@@ -1,6 +1,41 @@
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 
 from .models import Appointment, Patient
+
+
+User = get_user_model()
+
+
+class SignUpForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}))
+    password_confirmation = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}))
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(username=email).exists() or User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("An account with this email already exists.")
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        if password and password != cleaned_data.get("password_confirmation"):
+            self.add_error("password_confirmation", "Passwords do not match.")
+        if password:
+            validate_password(password)
+        return cleaned_data
+
+    def save(self):
+        email = self.cleaned_data["email"]
+        return User.objects.create_user(username=email, email=email, password=self.cleaned_data["password"])
+
+
+class EmailLoginForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}))
 
 
 class PatientForm(forms.ModelForm):

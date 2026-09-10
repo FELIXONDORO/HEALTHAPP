@@ -1,4 +1,4 @@
-# Carely healthcare dashboard
+# Apex Homecare dashboard
 
 A small Django starter app for a healthcare services practice. It includes a responsive dashboard, today's appointments, patient overview, and working Patients and Appointments pages.
 

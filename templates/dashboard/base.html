@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Carely{% endblock %} | Carely</title>
+  <title>{% block title %}Apex Homecare{% endblock %} | Apex Homecare</title>
   <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
   <script>
     (function () {
       try {
-        const savedTheme = localStorage.getItem('carely-theme');
+        const savedTheme = localStorage.getItem('apex-homecare-theme');
         if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.dataset.theme = savedTheme;
       } catch (error) {
         // Continue with the light theme when browser storage is unavailable.
@@ -22,7 +22,7 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar">
-      <a class="brand" href="{% url 'dashboard:home' %}"><span class="brand-mark"><i data-lucide="heart-pulse"></i></span><span class="brand-name">carely</span></a>
+      <a class="brand" href="{% url 'dashboard:home' %}"><img class="brand-logo" src="{% static 'img/apex-homecare-logo.png' %}" alt="Apex Homecare logo"><span class="brand-copy"><span class="brand-name">Apex <em>Homecare</em></span><span class="brand-tagline">Healthcare at your doorstep</span></span></a>
       <div class="nav-label">Workspace</div>
       <nav class="nav">
         <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:home' %}"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
@@ -36,7 +36,7 @@
         <a class="nav-link" href="#"><i data-lucide="settings-2"></i><span>Settings</span></a>
         <a class="nav-link" href="#"><i data-lucide="circle-help"></i><span>Help center</span></a>
       </nav>
-      <div class="sidebar-foot"><strong>Need assistance?</strong>Our care team is here to help whenever you need us.</div>
+      <div class="sidebar-foot"><strong>Apex Homecare · Eldoret</strong>Professional healthcare at your doorstep.<br>Call or WhatsApp: 0706023435</div>
     </aside>
     <main class="main">
       <header class="topbar">

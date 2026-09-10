@@ -25,7 +25,7 @@ themeToggle?.addEventListener('click', () => {
   const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
   document.documentElement.dataset.theme = nextTheme;
   try {
-    localStorage.setItem('carely-theme', nextTheme);
+    localStorage.setItem('apex-homecare-theme', nextTheme);
   } catch (error) {
     // The current page still changes when browser storage is unavailable.
   }

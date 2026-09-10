@@ -1,8 +1,13 @@
+import os
+import secrets
+from functools import wraps
+
 from django.contrib import messages
+from django.contrib.auth import authenticate, get_user_model, login as auth_login, logout as auth_logout
 from django.db.models import Count
 from django.shortcuts import redirect, render
 
-from .forms import AppointmentForm, PatientForm
+from .forms import AppointmentForm, EmailLoginForm, PatientForm, SignUpForm
 from .models import Appointment, Patient
 
 
@@ -20,8 +25,85 @@ PATIENTS = [
     {"name": "Noah Johnson", "email": "noah.j@example.com", "last_visit": "May 26, 2024", "status": "Active", "initials": "NJ", "tone": "blue"},
 ]
 
+User = get_user_model()
 
-def dashboard(request):
+
+def allowed_admin_emails():
+    return {email.strip().lower() for email in os.environ.get("ADMIN_EMAIL", "").split(",") if email.strip()}
+
+
+def admin_required(view):
+    @wraps(view)
+    def wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.session.get("apex_admin_authenticated"):
+            return redirect("dashboard:admin_login")
+        return view(request, *args, **kwargs)
+
+    return wrapped_view
+
+
+def public_home(request):
+    return render(request, "dashboard/public_home.html", {"services": [("heart-pulse", "Medical check-ups", "Blood pressure, blood sugar, SpO2 and temperature checks in the comfort of home."), ("cross", "Nursing care", "Compassionate wound care, catheter care and post-hospital recovery support."), ("accessibility", "Physiotherapy", "Coordinated physiotherapy services that help you regain confidence and mobility."), ("apple", "Nutrition support", "Nutritional consultation and practical weight-management guidance."), ("hand-heart", "Elderly care", "Thoughtful elderly visits, reports and chronic disease management."), ("baby", "Mother & baby care", "Antenatal, postnatal and family health support when you need it most.")]})
+
+
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard:home")
+    form = SignUpForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.save()
+        auth_login(request, user)
+        if user.email.lower() in allowed_admin_emails():
+            messages.success(request, "Your account is ready. Use the administrator password to access the dashboard.")
+            return redirect("dashboard:admin_login")
+        messages.success(request, "Your account has been created successfully.")
+        return redirect("dashboard:home")
+    return render(request, "dashboard/auth_form.html", {"form": form, "page_title": "Create your account", "submit_label": "Create account", "alternate_url": "dashboard:login", "alternate_text": "Already have an account? Sign in"})
+
+
+def login(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard:home")
+    form = EmailLoginForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        email = form.cleaned_data["email"].lower()
+        user = authenticate(request, username=email, password=form.cleaned_data["password"])
+        if user is not None:
+            auth_login(request, user)
+            messages.success(request, "Welcome back.")
+            return redirect("dashboard:home")
+        form.add_error(None, "Incorrect email or password.")
+    return render(request, "dashboard/auth_form.html", {"form": form, "page_title": "Sign in to your account", "submit_label": "Sign in", "alternate_url": "dashboard:signup", "alternate_text": "New to Apex Homecare? Create an account"})
+
+
+def logout(request):
+    request.session.pop("apex_admin_authenticated", None)
+    auth_logout(request)
+    return redirect("dashboard:home")
+
+
+def admin_login(request):
+    if request.user.is_authenticated and request.session.get("apex_admin_authenticated"):
+        return redirect("dashboard:admin_dashboard")
+    if request.method == "POST":
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
+        expected_password = os.environ.get("ADMIN_PASSWORD", "")
+        user = User.objects.filter(email__iexact=email).first()
+        if user and email in allowed_admin_emails() and expected_password and secrets.compare_digest(password, expected_password):
+            auth_login(request, user)
+            request.session["apex_admin_authenticated"] = True
+            return redirect("dashboard:admin_dashboard")
+        messages.error(request, "Use a registered, authorised administrator email and the administrator password.")
+    return render(request, "dashboard/admin_login.html")
+
+
+def admin_logout(request):
+    return logout(request)
+
+
+@admin_required
+def admin_dashboard(request):
     context = {
         "active_page": "dashboard",
         "appointments": APPOINTMENTS,
@@ -37,6 +119,7 @@ def dashboard(request):
     return render(request, "dashboard/dashboard.html", context)
 
 
+@admin_required
 def appointments(request):
     if request.method == "POST":
         form = AppointmentForm(request.POST)
@@ -61,6 +144,7 @@ def appointments(request):
     )
 
 
+@admin_required
 def patients(request):
     if request.method == "POST":
         form = PatientForm(request.POST)
