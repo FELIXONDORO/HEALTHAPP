@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -9,9 +10,19 @@ User = get_user_model()
 
 
 class SignUpForm(forms.Form):
-    email = forms.EmailField(widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}))
-    password_confirmation = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}))
+    email = forms.EmailField(
+        label="Email address",
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com", "autofocus": True}),
+    )
+    password = forms.CharField(
+        label="Password",
+        help_text="Must be at least 8 characters with uppercase, lowercase, a number, and a special character.",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "••••••••"}),
+    )
+    password_confirmation = forms.CharField(
+        label="Confirm password",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "••••••••"}),
+    )
 
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
@@ -19,13 +30,41 @@ class SignUpForm(forms.Form):
             raise forms.ValidationError("An account with this email already exists.")
         return email
 
+    def clean_password(self):
+        password = self.cleaned_data.get("password")
+        if not password:
+            return password
+
+        errors = []
+        if len(password) < 8:
+            errors.append("Password must be at least 8 characters long.")
+        if not re.search(r"[A-Z]", password):
+            errors.append("Password must contain at least one uppercase letter (A-Z).")
+        if not re.search(r"[a-z]", password):
+            errors.append("Password must contain at least one lowercase letter (a-z).")
+        if not re.search(r"[0-9]", password):
+            errors.append("Password must contain at least one number (0-9).")
+        
+        special_chars = set("!@#$%^&*()_+-=[]{};':\",./<>?~`|\\")
+        if not any(char in special_chars for char in password):
+            errors.append("Password must contain at least one special character (e.g. !@#$%^&*).")
+
+        try:
+            validate_password(password)
+        except forms.ValidationError as e:
+            errors.extend(e.messages)
+
+        if errors:
+            raise forms.ValidationError(errors)
+
+        return password
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
-        if password and password != cleaned_data.get("password_confirmation"):
+        password_confirmation = cleaned_data.get("password_confirmation")
+        if password and password_confirmation and password != password_confirmation:
             self.add_error("password_confirmation", "Passwords do not match.")
-        if password:
-            validate_password(password)
         return cleaned_data
 
     def save(self):
@@ -34,8 +73,14 @@ class SignUpForm(forms.Form):
 
 
 class EmailLoginForm(forms.Form):
-    email = forms.EmailField(widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}))
+    email = forms.EmailField(
+        label="Email address",
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com", "autofocus": True}),
+    )
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "placeholder": "••••••••"}),
+    )
 
 
 class PatientForm(forms.ModelForm):

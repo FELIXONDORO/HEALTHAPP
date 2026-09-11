@@ -58,7 +58,22 @@ def signup(request):
             return redirect("dashboard:admin_login")
         messages.success(request, "Your account has been created successfully.")
         return redirect("dashboard:home")
-    return render(request, "dashboard/auth_form.html", {"form": form, "page_title": "Create your account", "submit_label": "Create account", "alternate_url": "dashboard:login", "alternate_text": "Already have an account? Sign in"})
+    return render(
+        request,
+        "dashboard/auth_form.html",
+        {
+            "form": form,
+            "page_title": "Create your account",
+            "page_subtitle": "Start your journey with personalized home healthcare.",
+            "auth_mode": "signup",
+            "google_button_label": "Sign up with Google",
+            "divider_label": "or register with email",
+            "submit_label": "Create Account",
+            "alternate_prompt": "Already have an account?",
+            "alternate_url": "dashboard:login",
+            "alternate_text": "Sign in",
+        },
+    )
 
 
 def login(request):
@@ -73,7 +88,22 @@ def login(request):
             messages.success(request, "Welcome back.")
             return redirect("dashboard:home")
         form.add_error(None, "Incorrect email or password.")
-    return render(request, "dashboard/auth_form.html", {"form": form, "page_title": "Sign in to your account", "submit_label": "Sign in", "alternate_url": "dashboard:signup", "alternate_text": "New to Apex Homecare? Create an account"})
+    return render(
+        request,
+        "dashboard/auth_form.html",
+        {
+            "form": form,
+            "page_title": "Welcome back",
+            "page_subtitle": "Sign in to your Apex Homecare account.",
+            "auth_mode": "login",
+            "google_button_label": "Sign in with Google",
+            "divider_label": "or sign in with email",
+            "submit_label": "Sign In",
+            "alternate_prompt": "Don't have an account?",
+            "alternate_url": "dashboard:signup",
+            "alternate_text": "Create an account",
+        },
+    )
 
 
 def logout(request):
